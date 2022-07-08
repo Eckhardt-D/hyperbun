@@ -72,8 +72,6 @@ export class HyperBunRouter {
       if (response instanceof Response) return response;
     }
 
-    console.log(request.url);
-
     const path = new URL(request.url).pathname;
     const method = request.method;
     let handler: HyperBunHandler | Promise<HyperBunHandler>;

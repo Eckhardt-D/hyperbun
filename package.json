@@ -1,6 +1,6 @@
 {
   "name": "hyperbun",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "A fast http framework for Bun runtimes.",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",

@@ -1,22 +1,19 @@
+import {BlobAttachment} from './file';
 import {HyperBunRequest} from './request';
 
 type NextFn = (error?: Error) => void;
 
-type HandlerReturnType =
+type Returntypes =
   | Response
   | undefined
   | number
   | string
   | object
   | Array<string | object | number>
-  | Promise<
-      | Response
-      | undefined
-      | number
-      | string
-      | object
-      | Array<string | object | number>
-    >;
+  | BlobAttachment
+  | void;
+
+type HandlerReturnType = Returntypes | Promise<Returntypes>;
 
 type HyperBunHandler =
   | undefined
@@ -33,14 +30,24 @@ interface HandlerByPath {
 
 export class HyperBunRouter {
   private _middlewares = [] as HyperBunMiddleware[];
-  private _GET = {} as HandlerByPath;
-  private _POST = {} as HandlerByPath;
-  private _PUT = {} as HandlerByPath;
-  private _DELETE = {} as HandlerByPath;
+  private handlers = {
+    _GET: {} as HandlerByPath,
+    _POST: {} as HandlerByPath,
+    _PUT: {} as HandlerByPath,
+    _PATCH: {} as HandlerByPath,
+    _DELETE: {} as HandlerByPath,
+  };
 
   private async _handle(input?: HandlerReturnType) {
-    if (input instanceof Response) {
-      return input;
+    if ((input as BlobAttachment)?.blob instanceof Blob) {
+      const blobby = input as BlobAttachment;
+      const response = new Response(blobby.blob);
+      response.headers.set('Content-Type', blobby.blob.type);
+      response.headers.set(
+        'Content-Disposition',
+        `attachment; filename="${blobby.filename}"`
+      );
+      return response;
     }
 
     if (typeof input === 'undefined') {
@@ -56,7 +63,7 @@ export class HyperBunRouter {
     return response;
   }
 
-  async handle(request: HyperBunRequest): Promise<Response> {
+  protected async handle(request: HyperBunRequest): Promise<Response> {
     for (const middleware of this._middlewares) {
       const response = await middleware(
         request,
@@ -73,25 +80,16 @@ export class HyperBunRouter {
     }
 
     const path = new URL(request.url).pathname;
-    const method = request.method;
-    let handler: HyperBunHandler | Promise<HyperBunHandler>;
+    const method = request.method as
+      | 'GET'
+      | 'POST'
+      | 'PUT'
+      | 'PATCH'
+      | 'DELETE';
 
-    switch (method.toUpperCase()) {
-      case 'GET':
-        handler = this._GET[path];
-        break;
-      case 'POST':
-        handler = this._POST[path];
-        break;
-      case 'PUT':
-        handler = this._PUT[path];
-        break;
-      case 'DELETE':
-        handler = this._DELETE[path];
-        break;
-      default:
-        handler = undefined;
-    }
+    console.log(request.method);
+
+    const handler = this.handlers[`_${method}`][path];
 
     if (!handler) {
       return new Response(`Could not ${method} ${path}`, {
@@ -107,18 +105,22 @@ export class HyperBunRouter {
   }
 
   get(path: string, handler: HyperBunHandler) {
-    this._GET[path] = handler;
+    this.handlers._GET[path] = handler;
   }
 
   post(path: string, handler: HyperBunHandler) {
-    this._POST[path] = handler;
+    this.handlers._POST[path] = handler;
   }
 
   put(path: string, handler: HyperBunHandler) {
-    this._PUT[path] = handler;
+    this.handlers._PUT[path] = handler;
+  }
+
+  patch(path: string, handler: HyperBunHandler) {
+    this.handlers._PATCH[path] = handler;
   }
 
   delete(path: string, handler: HyperBunHandler) {
-    this._DELETE[path] = handler;
+    this.handlers._DELETE[path] = handler;
   }
 }

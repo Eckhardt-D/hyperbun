@@ -12,6 +12,8 @@ class HyperBunServer extends HyperBunRouter {
         return this.handle(
           new HyperBunRequest(request.url, {
             ...request,
+            method: request.method,
+            headers: request.headers,
           })
         );
       },
@@ -22,3 +24,5 @@ class HyperBunServer extends HyperBunRouter {
 export const createServer = () => {
   return new HyperBunServer();
 };
+
+export {asAttachment} from './file';

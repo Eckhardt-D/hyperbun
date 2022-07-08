@@ -1,0 +1,5 @@
+src/*
+.eslintignore
+.eslintrc.json
+.prettierrc.js
+package-lock.json

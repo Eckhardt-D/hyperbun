@@ -3,3 +3,4 @@ src/*
 .eslintrc.json
 .prettierrc.js
 package-lock.json
+examples/

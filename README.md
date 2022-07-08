@@ -54,6 +54,7 @@ server.middleware((request, context) => {
 
 server.get('/private', (_, context) => {
   if (context.auth?.user !== '1234') {
+    // Return your own custom responses too.
     return new Response('unauthorized', {
       status: 401,
     })
@@ -92,6 +93,20 @@ server.listen({
 
 ```
 
+## Consuming a request body
+
+```ts
+import {createServer} from 'hyperbun'
+
+const server = createServer();
+
+server.post('/users/add', async (request, context) => {
+  const user = await request.json();
+  const result = await database.create(user);
+  return result;
+});
+```
+
 ## Not nearly ready yet..
 
 You can probably use it for the most basic HTTP server, but there are maaaany things missing and in progress. So probably don't.
@@ -104,3 +119,4 @@ These listeners will automatically match the route and method that you setup and
 `server.post`
 `server.put`
 `server.delete`
+`server.patch`

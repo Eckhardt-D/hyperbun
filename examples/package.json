@@ -13,6 +13,6 @@
     "hyperbun": "^0.1.5"
   },
   "devDependencies": {
-    "bun-types": "^0.0.83"
+    "bun-types": "^0.1.2"
   }
 }

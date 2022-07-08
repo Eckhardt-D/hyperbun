@@ -2,11 +2,11 @@ import {createServer, asAttachment} from '../src/index';
 
 const server = createServer();
 
-server.get('/file', () => {
+server.get('/file-inline',  () => {
   return Bun.file('./test-file.txt'); // Inline
 })
 
-server.get('/file', () => {
+server.get('/file-download',  () => {
   return asAttachment('./test-file.txt', { // Attachment (download)
     name: 'helloworld.txt'
   });

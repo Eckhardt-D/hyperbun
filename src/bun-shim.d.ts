@@ -3363,6 +3363,11 @@ declare class Request implements BlobInterface {
   readonly url: string;
 
   /**
+   * Whether the body has been
+   * consumed yet.
+   */
+  readonly bodyUsed: boolean;
+  /**
    * Consume the [`Request`](https://developer.mozilla.org/en-US/docs/Web/API/Request) body as a string. It will be decoded from UTF-8.
    *
    * When the body is valid latin1, this operation is zero copy.

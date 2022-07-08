@@ -1,7 +1,12 @@
 import {BlobAttachment} from './file';
-import {HyperBunRequest} from './request';
 
-type NextFn = (error?: Error) => void;
+type ParamOrQuery = {[key: string]: string};
+
+interface Context {
+  params: ParamOrQuery;
+  query: ParamOrQuery;
+  [key: string]: unknown;
+}
 
 type Returntypes =
   | Response
@@ -15,14 +20,15 @@ type Returntypes =
 
 type HandlerReturnType = Returntypes | Promise<Returntypes>;
 
-type HyperBunHandler =
-  | undefined
-  | ((req: HyperBunRequest) => HandlerReturnType);
+type HyperBunHandler = (
+  request: Request,
+  context: Context
+) => HandlerReturnType;
 
 type HyperBunMiddleware = (
-  req: HyperBunRequest,
-  next: NextFn
-) => Response | void | Promise<Response | void>;
+  request: Request,
+  context: Context
+) => Error | Response | void;
 
 interface HandlerByPath {
   [key: string]: HyperBunHandler;
@@ -38,7 +44,82 @@ export class HyperBunRouter {
     _DELETE: {} as HandlerByPath,
   };
 
-  private async _handle(input?: HandlerReturnType) {
+  protected async handle(request: Request): Promise<Response> {
+    const url = new URL(request.url);
+    const path = url.pathname;
+    const search = new URLSearchParams(url.search);
+
+    const context: Context = {
+      query: {},
+      params: {},
+    };
+
+    for (const [key, value] of search) {
+      context.query[key] = value;
+    }
+
+    let middlewareResponse: Error | Response | void;
+    /**
+     * @todo, for some reason, middlewares cannot be
+     * async - otherwise the response never gets sent
+     * debug later, for now MWs must be sync...
+     */
+    for (const middleware of this._middlewares) {
+      middlewareResponse = middleware(request, context);
+
+      if (
+        middlewareResponse instanceof Error ||
+        middlewareResponse instanceof Response
+      ) {
+        break;
+      }
+    }
+
+    if (middlewareResponse instanceof Response) {
+      return middlewareResponse;
+    }
+
+    if (middlewareResponse instanceof Error) {
+      return new Response(middlewareResponse.message, {
+        status: 500,
+      });
+    }
+
+    const method = request.method as
+      | 'GET'
+      | 'POST'
+      | 'PUT'
+      | 'PATCH'
+      | 'DELETE';
+
+    const handler = this.handlers[`_${method}`][path];
+
+    if (handler === undefined) {
+      return new Response(`Could not ${method} ${path}`, {
+        status: 404,
+      });
+    }
+
+    const isAsync = handler.constructor.name === 'AsyncFunction';
+
+    const result = isAsync
+      ? await handler(request, context)
+      : handler(request, context);
+
+    return this._createResponse(result);
+  }
+
+  private async _createResponse(input?: Returntypes) {
+    if (input instanceof Response) {
+      return input;
+    }
+
+    if (input instanceof Blob) {
+      const response = new Response(input);
+      response.headers.set('Content-Type', input.type);
+      return response;
+    }
+
     if ((input as BlobAttachment)?.blob instanceof Blob) {
       const blobby = input as BlobAttachment;
       const response = new Response(blobby.blob);
@@ -61,43 +142,6 @@ export class HyperBunRouter {
     const response = Response.json(input);
     response.headers.set('Content-Type', 'application/json');
     return response;
-  }
-
-  protected async handle(request: HyperBunRequest): Promise<Response> {
-    for (const middleware of this._middlewares) {
-      const response = await middleware(
-        request,
-        (error: unknown): Response | void => {
-          if (error instanceof Error) {
-            return new Response(error.message || '', {
-              status: 500,
-            });
-          }
-        }
-      );
-
-      if (response instanceof Response) return response;
-    }
-
-    const path = new URL(request.url).pathname;
-    const method = request.method as
-      | 'GET'
-      | 'POST'
-      | 'PUT'
-      | 'PATCH'
-      | 'DELETE';
-
-    console.log(request.method);
-
-    const handler = this.handlers[`_${method}`][path];
-
-    if (!handler) {
-      return new Response(`Could not ${method} ${path}`, {
-        status: 404,
-      });
-    }
-
-    return this._handle(await handler(request));
   }
 
   middleware(middleware: HyperBunMiddleware) {

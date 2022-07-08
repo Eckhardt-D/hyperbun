@@ -2,15 +2,15 @@ import {createServer} from '../src/index';
 
 const server = createServer();
 
-server.middleware((request) => {
-  request.context.auth = {username: 'Johnny'};
+server.middleware((_, context) => {
+  context.auth = {username: 'Johnny'};
 });
 
-server.middleware((request) => {
-  console.log(request.context);
+server.middleware((_, context) => {
+  console.log(context);
 });
 
-server.get('/', (request) => {
+server.get('/', async (request) => {
   return {
     url: request.url,
   }

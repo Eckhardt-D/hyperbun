@@ -13,21 +13,21 @@ import {createServer} from 'hyperbun';
 
 const server = createServer();
 
-server.middleware((request, next) => {
+server.middleware((request, context) => {
   console.log('Just a simple middleware...');
 });
 
-server.middleware((request, next) => {
+server.middleware((request, context) => {
   return next(Error('Oops, I returned a 500.'));
 });
 
-server.get('/json', (request) => {
+server.get('/json', (request, context) => {
   return {
     hello: 'I will automatically become a JSON response...'
   }
 });
 
-server.get('/text', (request) => {
+server.get('/text', (request, context) => {
   return "Hello, I will be a text/html response...";
 });
 
@@ -37,18 +37,22 @@ server.listen({
 });
 ```
 
+> Note, middlewares are currently not 100% great, you can use them for context stuff and firing in sequence. But the cannot be async and don't consume the request body. Yet.
+
 ## Request Context
+
+Includes `{params: {}, query: {}}` by default. More to come.
 
 ```ts
 import {createServer} from 'hyperbun'
 
 const server = createServer();
 
-server.middleware((request) => {
-  request.context.auth = {user: '1234'};
+server.middleware((request, context) => {
+  context.auth = {user: '1234'};
 });
 
-server.get('/private', ({context}) => {
+server.get('/private', (_, context) => {
   if (context.auth?.user !== '1234') {
     return new Response('unauthorized', {
       status: 401,

@@ -18,7 +18,7 @@ server.middleware((request, context) => {
 });
 
 server.middleware((request, context) => {
-  return next(Error('Oops, I returned a 500.'));
+  return Error('Oops, I returned a 500.');
 });
 
 server.get('/json', (request, context) => {

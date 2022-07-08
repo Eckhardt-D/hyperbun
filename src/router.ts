@@ -1,21 +1,54 @@
-export type NextFn = (error?: Error) => void;
-export type HyperBunHandler = (req: Request) => any;
-export type HyperBunMiddleware = (req: Request, next: NextFn) => Response | void;
+import {HyperBunRequest} from './request';
+
+type NextFn = (error?: Error) => void;
+
+type HandlerReturnType =
+  | Response
+  | undefined
+  | number
+  | string
+  | object
+  | Array<string | object | number>
+  | Promise<
+      | Response
+      | undefined
+      | number
+      | string
+      | object
+      | Array<string | object | number>
+    >;
+
+type HyperBunHandler =
+  | undefined
+  | ((req: HyperBunRequest) => HandlerReturnType);
+
+type HyperBunMiddleware = (
+  req: HyperBunRequest,
+  next: NextFn
+) => Response | void | Promise<Response | void>;
+
+interface HandlerByPath {
+  [key: string]: HyperBunHandler;
+}
 
 export class HyperBunRouter {
   private _middlewares = [] as HyperBunMiddleware[];
-  private _GET = {} as {[key: string]: HyperBunHandler};
-  private _POST = {} as {[key: string]: HyperBunHandler};;
-  private _PUT = {} as {[key: string]: HyperBunHandler};;
-  private _DELETE = {} as {[key: string]: HyperBunHandler};;
+  private _GET = {} as HandlerByPath;
+  private _POST = {} as HandlerByPath;
+  private _PUT = {} as HandlerByPath;
+  private _DELETE = {} as HandlerByPath;
 
-  private _handle(input: number | string | object | Array<string | object | number>) {
+  private async _handle(input?: HandlerReturnType) {
+    if (input instanceof Response) {
+      return input;
+    }
+
     if (typeof input === 'undefined') {
       return new Response('OK');
     }
 
     if (typeof input === 'string' || typeof input === 'number') {
-      return new Response(input.toString())
+      return new Response(input.toString());
     }
 
     const response = Response.json(input);
@@ -23,24 +56,29 @@ export class HyperBunRouter {
     return response;
   }
 
-  async handle(request: Request): Promise<Response> {
+  async handle(request: HyperBunRequest): Promise<Response> {
     for (const middleware of this._middlewares) {
-      const response = await middleware(request, (error: unknown): Response | void => {
-        if (error instanceof Error) {
-          return new Response(error.message || '', {
-            status: 500,
-          })
+      const response = await middleware(
+        request,
+        (error: unknown): Response | void => {
+          if (error instanceof Error) {
+            return new Response(error.message || '', {
+              status: 500,
+            });
+          }
         }
-      });
+      );
 
       if (response instanceof Response) return response;
     }
 
+    console.log(request.url);
+
     const path = new URL(request.url).pathname;
     const method = request.method;
-    let handler: HyperBunHandler | undefined;
+    let handler: HyperBunHandler | Promise<HyperBunHandler>;
 
-    switch(method.toUpperCase()) {
+    switch (method.toUpperCase()) {
       case 'GET':
         handler = this._GET[path];
         break;
@@ -63,7 +101,7 @@ export class HyperBunRouter {
       });
     }
 
-    return this._handle(handler(request))
+    return this._handle(await handler(request));
   }
 
   middleware(middleware: HyperBunMiddleware) {
@@ -85,4 +123,4 @@ export class HyperBunRouter {
   delete(path: string, handler: HyperBunHandler) {
     this._DELETE[path] = handler;
   }
-};
+}

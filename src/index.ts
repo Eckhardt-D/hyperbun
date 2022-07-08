@@ -1,19 +1,24 @@
+import {HyperBunRequest} from './request';
 import {HyperBunRouter} from './router';
 import {Serve} from './serve-types';
 
-type HyperBunListenerOptions = Omit<Serve, "fetch">
+type HyperBunListenerOptions = Omit<Serve, 'fetch'>;
 
 class HyperBunServer extends HyperBunRouter {
   listen(options: HyperBunListenerOptions): ReturnType<typeof Bun.serve> {
     return Bun.serve({
       ...options,
-      fetch: (request) => {
-        return this.handle(request);
-      }
-    })
+      fetch: request => {
+        return this.handle(
+          new HyperBunRequest(request.url, {
+            ...request,
+          })
+        );
+      },
+    });
   }
 }
 
-export const createServer = (options?: never) => {
+export const createServer = () => {
   return new HyperBunServer();
-}
+};

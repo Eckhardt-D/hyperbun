@@ -7,6 +7,9 @@
   "files": [
     "build/src"
   ],
+  "engines": {
+    "node": ">=16"
+  },
   "license": "MIT",
   "keywords": [],
   "scripts": {

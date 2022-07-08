@@ -37,6 +37,33 @@ server.listen({
 });
 ```
 
+## Request Context
+
+```ts
+import {createServer} from 'hyperbun'
+
+const server = createServer();
+
+server.middleware((request) => {
+  request.context.auth = {user: '1234'};
+});
+
+server.get('/private', ({context}) => {
+  if (context.auth?.user !== '1234') {
+    return new Response('unauthorized', {
+      status: 401,
+    })
+  }
+
+  return {
+    private: 'data',
+  }
+})
+
+server.listen({port: 3000});
+
+```
+
 ## Not nearly ready yet..
 
 You can probably use it for the most basic HTTP server, but there are maaaany things missing and in progress. So probably don't.

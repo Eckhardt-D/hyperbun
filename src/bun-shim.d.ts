@@ -29,7 +29,7 @@ interface VoidFunction {
  * This module aliases `globalThis.Bun`.
  *
  */
-declare module "bun" {
+declare module 'bun' {
   /**
    * Start a fast HTTP server.
    *
@@ -205,14 +205,14 @@ declare module "bun" {
    *
    * Here is similar code to do it manually, except about 30% slower:
    * ```js
-   *   var chunks = [...];
-   *   var size = 0;
+   *   const chunks = [...];
+   *   const size = 0;
    *   for (const chunk of chunks) {
    *     size += chunk.byteLength;
    *   }
-   *   var buffer = new ArrayBuffer(size);
-   *   var view = new Uint8Array(buffer);
-   *   var offset = 0;
+   *   const buffer = new ArrayBuffer(size);
+   *   const view = new Uint8Array(buffer);
+   *   const offset = 0;
    *   for (const chunk of chunks) {
    *     view.set(chunk, offset);
    *     offset += chunk.byteLength;
@@ -463,18 +463,18 @@ declare module "bun" {
     /**
      * When building for bun.js
      */
-    | "bun"
+    | 'bun'
     /**
      * When building for the web
      */
-    | "browser"
+    | 'browser'
     /**
      * When building for node.js
      */
-    | "node"
-    | "neutral";
+    | 'node'
+    | 'neutral';
 
-  export type JavaScriptLoader = "jsx" | "js" | "ts" | "tsx";
+  export type JavaScriptLoader = 'jsx' | 'js' | 'ts' | 'tsx';
 
   export interface TranspilerOptions {
     /**
@@ -621,7 +621,7 @@ declare module "bun" {
      * console.log(exports); // ["hello"]
      * ```
      */
-    scan(code: StringOrBuffer): { exports: string[]; imports: Import[] };
+    scan(code: StringOrBuffer): {exports: string[]; imports: Import[]};
 
     /**
      *  Get a list of import paths from a TypeScript, JSX, TSX, or JavaScript file.
@@ -645,14 +645,14 @@ declare module "bun" {
     path: string;
 
     kind:
-      | "import-statement"
-      | "require-call"
-      | "require-resolve"
-      | "dynamic-import"
-      | "import-rule"
-      | "url-token"
-      | "internal"
-      | "entry-point";
+      | 'import-statement'
+      | 'require-call'
+      | 'require-resolve'
+      | 'dynamic-import'
+      | 'import-rule'
+      | 'url-token'
+      | 'internal'
+      | 'entry-point';
   }
 
   export interface ServeOptions {
@@ -968,7 +968,7 @@ declare module "bun" {
   }
   export const unsafe: unsafe;
 
-  type DigestEncoding = "hex" | "base64";
+  type DigestEncoding = 'hex' | 'base64';
 
   /**
    * Are ANSI colors enabled for stdin and stdout?
@@ -1047,7 +1047,7 @@ declare module "bun" {
   export function openInEditor(path: string, options?: EditorOptions): void;
 
   interface EditorOptions {
-    editor?: "vscode" | "subl";
+    editor?: 'vscode' | 'subl';
     line?: number;
     column?: number;
   }
@@ -1226,13 +1226,11 @@ type PathLike = string | TypedArray | ArrayBufferLike;
 type PathOrFileDescriptor = PathLike | number;
 type NoParamCallback = VoidFunction;
 
-
 interface BufferEncodingOption {
   encoding?: BufferEncoding;
 }
 
-declare var Bun: typeof import("bun");
-
+declare let Bun: typeof import('bun');
 
 // ./ffi.d.ts
 
@@ -1253,7 +1251,7 @@ declare var Bun: typeof import("bun");
  * goes to Fabrice Bellard and TinyCC maintainers for making this possible.
  *
  */
-declare module "bun:ffi" {
+declare module 'bun:ffi' {
   export enum FFIType {
     char = 0,
     /**
@@ -1271,7 +1269,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     int8_t = 1,
@@ -1290,7 +1288,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     i8 = 1,
@@ -1309,7 +1307,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     uint8_t = 2,
@@ -1327,7 +1325,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     u8 = 2,
@@ -1347,7 +1345,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     int16_t = 3,
@@ -1366,7 +1364,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     i16 = 3,
@@ -1386,7 +1384,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     uint16_t = 4,
@@ -1405,7 +1403,7 @@ declare module "bun:ffi" {
      *
      * In JavaScript:
      * ```js
-     * var num = 0;
+     * const num = 0;
      * ```
      */
     u16 = 4,
@@ -1585,33 +1583,33 @@ declare module "bun:ffi" {
   }
   export type FFITypeOrString =
     | FFIType
-    | "char"
-    | "int8_t"
-    | "i8"
-    | "uint8_t"
-    | "u8"
-    | "int16_t"
-    | "i16"
-    | "uint16_t"
-    | "u16"
-    | "int32_t"
-    | "i32"
-    | "int"
-    | "uint32_t"
-    | "u32"
-    | "int64_t"
-    | "i64"
-    | "uint64_t"
-    | "u64"
-    | "double"
-    | "f64"
-    | "float"
-    | "f32"
-    | "bool"
-    | "ptr"
-    | "pointer"
-    | "void"
-    | "cstring";
+    | 'char'
+    | 'int8_t'
+    | 'i8'
+    | 'uint8_t'
+    | 'u8'
+    | 'int16_t'
+    | 'i16'
+    | 'uint16_t'
+    | 'u16'
+    | 'int32_t'
+    | 'i32'
+    | 'int'
+    | 'uint32_t'
+    | 'u32'
+    | 'int64_t'
+    | 'i64'
+    | 'uint64_t'
+    | 'u64'
+    | 'double'
+    | 'f64'
+    | 'float'
+    | 'f32'
+    | 'bool'
+    | 'ptr'
+    | 'pointer'
+    | 'void'
+    | 'cstring';
 
   interface FFIFunction {
     /**
@@ -1766,7 +1764,7 @@ declare module "bun:ffi" {
    *
    */
   export function CFunction(
-    fn: FFIFunction & { ptr: number | bigint }
+    fn: FFIFunction & {ptr: number | bigint}
   ): CallableFunction & {
     /**
      * Free the memory allocated by the wrapping function
@@ -1907,13 +1905,13 @@ declare module "bun:ffi" {
    *
    * @example
    * ```js
-   * var ptr = lib.symbols.getVersion();
+   * const ptr = lib.symbols.getVersion();
    * console.log(new CString(ptr));
    * ```
    *
    * @example
    * ```js
-   * var ptr = lib.symbols.getVersion();
+   * const ptr = lib.symbols.getVersion();
    * // print the first 4 characters
    * console.log(new CString(ptr, 0, 4));
    * ```
@@ -1936,13 +1934,13 @@ declare module "bun:ffi" {
      *
      * @example
      * ```js
-     * var ptr = lib.symbols.getVersion();
+     * const ptr = lib.symbols.getVersion();
      * console.log(new CString(ptr));
      * ```
      *
      * @example
      * ```js
-     * var ptr = lib.symbols.getVersion();
+     * const ptr = lib.symbols.getVersion();
      * // print the first 4 characters
      * console.log(new CString(ptr, 0, 4));
      * ```
@@ -2000,7 +1998,6 @@ declare module "bun:ffi" {
   export const suffix: string;
 }
 
-
 // ./sqlite.d.ts
 
 /**
@@ -2011,7 +2008,7 @@ declare module "bun:ffi" {
  * ```ts
  * import { Database } from 'bun:sqlite';
  *
- * var db = new Database('app.db');
+ * const db = new Database('app.db');
  * db.query('SELECT * FROM users WHERE name = ?').all('John');
  * // => [{ id: 1, name: 'John' }]
  * ```
@@ -2028,7 +2025,7 @@ declare module "bun:ffi" {
  * | `bigint` | `INTEGER` |
  * | `null` | `NULL` |
  */
-declare module "bun:sqlite" {
+declare module 'bun:sqlite' {
   export class Database {
     /**
      * Open or create a SQLite3 database
@@ -2737,7 +2734,7 @@ declare module "bun:sqlite" {
    * that probably points to a deficiency in this API.
    *
    */
-  export var native: any;
+  export const native: any;
 
   export type SQLQueryBindings =
     | string
@@ -2750,7 +2747,6 @@ declare module "bun:sqlite" {
 
   export default Database;
 }
-
 
 // ./html-rewriter.d.ts
 
@@ -2868,11 +2864,9 @@ declare class HTMLRewriter {
   transform(input: Response): Response;
 }
 
-
 // ./globals.d.ts
 
-type Encoding = "utf-8" | "windows-1252" | "utf-16";
-
+type Encoding = 'utf-8' | 'windows-1252' | 'utf-16';
 
 interface ImportMeta {
   /**
@@ -2942,19 +2936,19 @@ interface Process {
   ppid: number;
   pid: number;
   arch:
-    | "arm64"
-    | "arm"
-    | "ia32"
-    | "mips"
-    | "mipsel"
-    | "ppc"
-    | "ppc64"
-    | "s390"
-    | "s390x"
-    | "x32"
-    | "x64"
-    | "x86";
-  platform: "darwin" | "freebsd" | "linux" | "openbsd" | "sunos" | "win32";
+    | 'arm64'
+    | 'arm'
+    | 'ia32'
+    | 'mips'
+    | 'mipsel'
+    | 'ppc'
+    | 'ppc64'
+    | 's390'
+    | 's390x'
+    | 'x32'
+    | 'x64'
+    | 'x86';
+  platform: 'darwin' | 'freebsd' | 'linux' | 'openbsd' | 'sunos' | 'win32';
   argv: string[];
   // execArgv: string[];
   env: Record<string, string> & {
@@ -2983,7 +2977,7 @@ interface BlobPropertyBag {
   type?: string;
 
   /** Not implemented in Bun yet. */
-  endings?: "transparent" | "native";
+  endings?: 'transparent' | 'native';
 }
 
 /**
@@ -3010,19 +3004,19 @@ interface Headers {
   ): void;
 }
 
-declare var Headers: {
+declare const Headers: {
   prototype: Headers;
   new (init?: HeadersInit): Headers;
 };
 
 type HeadersInit = Array<[string, string]> | Record<string, string> | Headers;
 type ResponseType =
-  | "basic"
-  | "cors"
-  | "default"
-  | "error"
-  | "opaque"
-  | "opaqueredirect";
+  | 'basic'
+  | 'cors'
+  | 'default'
+  | 'error'
+  | 'opaque'
+  | 'opaqueredirect';
 
 declare class Blob implements BlobInterface {
   /**
@@ -3212,46 +3206,46 @@ declare class Response implements BlobInterface {
 }
 
 type RequestCache =
-  | "default"
-  | "force-cache"
-  | "no-cache"
-  | "no-store"
-  | "only-if-cached"
-  | "reload";
-type RequestCredentials = "include" | "omit" | "same-origin";
+  | 'default'
+  | 'force-cache'
+  | 'no-cache'
+  | 'no-store'
+  | 'only-if-cached'
+  | 'reload';
+type RequestCredentials = 'include' | 'omit' | 'same-origin';
 type RequestDestination =
-  | ""
-  | "audio"
-  | "audioworklet"
-  | "document"
-  | "embed"
-  | "font"
-  | "frame"
-  | "iframe"
-  | "image"
-  | "manifest"
-  | "object"
-  | "paintworklet"
-  | "report"
-  | "script"
-  | "sharedworker"
-  | "style"
-  | "track"
-  | "video"
-  | "worker"
-  | "xslt";
-type RequestMode = "cors" | "navigate" | "no-cors" | "same-origin";
-type RequestRedirect = "error" | "follow" | "manual";
+  | ''
+  | 'audio'
+  | 'audioworklet'
+  | 'document'
+  | 'embed'
+  | 'font'
+  | 'frame'
+  | 'iframe'
+  | 'image'
+  | 'manifest'
+  | 'object'
+  | 'paintworklet'
+  | 'report'
+  | 'script'
+  | 'sharedworker'
+  | 'style'
+  | 'track'
+  | 'video'
+  | 'worker'
+  | 'xslt';
+type RequestMode = 'cors' | 'navigate' | 'no-cors' | 'same-origin';
+type RequestRedirect = 'error' | 'follow' | 'manual';
 type ReferrerPolicy =
-  | ""
-  | "no-referrer"
-  | "no-referrer-when-downgrade"
-  | "origin"
-  | "origin-when-cross-origin"
-  | "same-origin"
-  | "strict-origin"
-  | "strict-origin-when-cross-origin"
-  | "unsafe-url";
+  | ''
+  | 'no-referrer'
+  | 'no-referrer-when-downgrade'
+  | 'origin'
+  | 'origin-when-cross-origin'
+  | 'same-origin'
+  | 'strict-origin'
+  | 'strict-origin-when-cross-origin'
+  | 'unsafe-url';
 type RequestInfo = Request | string;
 
 type BodyInit = ReadableStream | XMLHttpRequestBodyInit;
@@ -3473,7 +3467,7 @@ interface Crypto {
   randomUUID(): string;
 }
 
-declare var crypto: Crypto;
+declare let crypto: Crypto;
 
 /**
  * [`atob`](https://developer.mozilla.org/en-US/docs/Web/API/atob) converts ascii text into base64.
@@ -3500,8 +3494,8 @@ declare function btoa(base64Text: string): string;
  *
  */
 declare class TextEncoder {
-  constructor(encoding?: "utf-8");
-  readonly encoding: "utf-8";
+  constructor(encoding?: 'utf-8');
+  readonly encoding: 'utf-8';
 
   /**
    * UTF-8 encodes the `input` string and returns a `Uint8Array` containing the
@@ -3528,7 +3522,7 @@ declare class TextEncoder {
 declare class TextDecoder {
   constructor(
     encoding?: Encoding,
-    options?: { fatal?: boolean; ignoreBOM?: boolean }
+    options?: {fatal?: boolean; ignoreBOM?: boolean}
   );
 
   encoding: Encoding;
@@ -3647,7 +3641,7 @@ interface Blob {
   arrayBuffer(): Promise<ArrayBuffer>;
 }
 
-declare var performance: {
+declare let performance: {
   /**
    * Seconds since Bun.js started
    *
@@ -3853,7 +3847,7 @@ interface EventTarget {
   ): void;
 }
 
-declare var EventTarget: {
+declare const EventTarget: {
   prototype: EventTarget;
   new (): EventTarget;
 };
@@ -3957,7 +3951,7 @@ interface Event {
   readonly NONE: number;
 }
 
-declare var Event: {
+declare const Event: {
   prototype: Event;
   new (type: string, eventInitDict?: EventInit): Event;
   readonly AT_TARGET: number;
@@ -3977,7 +3971,7 @@ interface ErrorEvent extends Event {
   readonly message: string;
 }
 
-declare var ErrorEvent: {
+declare const ErrorEvent: {
   prototype: ErrorEvent;
   new (type: string, eventInitDict?: ErrorEventInit): ErrorEvent;
 };
@@ -4035,11 +4029,6 @@ interface EventListenerObject {
   handleEvent(object: Event): void;
 }
 
-declare var AbortController: {
-  prototype: AbortController;
-  new (): AbortController;
-};
-
 interface FetchEvent extends Event {
   readonly request: Request;
   readonly url: string;
@@ -4062,40 +4051,6 @@ interface AddEventListenerOptions extends EventListenerOptions {
   passive?: boolean;
   signal?: AbortSignal;
 }
-
-/** A signal object that allows you to communicate with a DOM request (such as a Fetch) and abort it if required via an AbortController object. */
-interface AbortSignal extends EventTarget {
-  /**
-   * Returns true if this AbortSignal's AbortController has signaled to abort, and false otherwise.
-   */
-  readonly aborted: boolean;
-  onabort: ((this: AbortSignal, ev: Event) => any) | null;
-  addEventListener<K extends keyof AbortSignalEventMap>(
-    type: K,
-    listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any,
-    options?: boolean | AddEventListenerOptions
-  ): void;
-  addEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | AddEventListenerOptions
-  ): void;
-  removeEventListener<K extends keyof AbortSignalEventMap>(
-    type: K,
-    listener: (this: AbortSignal, ev: AbortSignalEventMap[K]) => any,
-    options?: boolean | EventListenerOptions
-  ): void;
-  removeEventListener(
-    type: string,
-    listener: EventListenerOrEventListenerObject,
-    options?: boolean | EventListenerOptions
-  ): void;
-}
-
-declare var AbortSignal: {
-  prototype: AbortSignal;
-  new (): AbortSignal;
-};
 
 // type AlgorithmIdentifier = Algorithm | string;
 // type BodyInit = ReadableStream | XMLHttpRequestBodyInit;
@@ -4127,7 +4082,7 @@ type EventListenerOrEventListenerObject = EventListener | EventListenerObject;
  * Bun may inject additional imports into your code. This usually has a `bun:` prefix.
  *
  */
-declare var Loader: {
+declare let Loader: {
   /**
    * ESM module registry
    *
@@ -4236,7 +4191,7 @@ interface ReadableStream<R = any> {
   ): void;
 }
 
-declare var ReadableStream: {
+declare const ReadableStream: {
   prototype: ReadableStream;
   new <R = any>(
     underlyingSource?: DirectUnderlyingSource<R> | UnderlyingSource<R>,
@@ -4264,7 +4219,7 @@ interface ByteLengthQueuingStrategy extends QueuingStrategy<ArrayBufferView> {
   readonly size: QueuingStrategySize<ArrayBufferView>;
 }
 
-declare var ByteLengthQueuingStrategy: {
+declare const ByteLengthQueuingStrategy: {
   prototype: ByteLengthQueuingStrategy;
   new (init: QueuingStrategyInit): ByteLengthQueuingStrategy;
 };
@@ -4284,7 +4239,7 @@ interface ReadableStreamDirectController {
   start(): void;
 }
 
-declare var ReadableStreamDefaultController: {
+declare const ReadableStreamDefaultController: {
   prototype: ReadableStreamDefaultController;
   new (): ReadableStreamDefaultController;
 };
@@ -4295,7 +4250,7 @@ interface ReadableStreamDefaultReader<R = any>
   releaseLock(): void;
 }
 
-declare var ReadableStreamDefaultReader: {
+declare const ReadableStreamDefaultReader: {
   prototype: ReadableStreamDefaultReader;
   new <R = any>(stream: ReadableStream<R>): ReadableStreamDefaultReader<R>;
 };
@@ -4333,7 +4288,7 @@ interface WritableStream<W = any> {
   getWriter(): WritableStreamDefaultWriter<W>;
 }
 
-declare var WritableStream: {
+declare const WritableStream: {
   prototype: WritableStream;
   new <W = any>(
     underlyingSink?: UnderlyingSink<W>,
@@ -4346,7 +4301,7 @@ interface WritableStreamDefaultController {
   error(e?: any): void;
 }
 
-declare var WritableStreamDefaultController: {
+declare const WritableStreamDefaultController: {
   prototype: WritableStreamDefaultController;
   new (): WritableStreamDefaultController;
 };
@@ -4362,7 +4317,7 @@ interface WritableStreamDefaultWriter<W = any> {
   write(chunk?: W): Promise<void>;
 }
 
-declare var WritableStreamDefaultWriter: {
+declare const WritableStreamDefaultWriter: {
   prototype: WritableStreamDefaultWriter;
   new <W = any>(stream: WritableStream<W>): WritableStreamDefaultWriter<W>;
 };
@@ -4409,7 +4364,7 @@ interface UnderlyingSink<W = any> {
   abort?: UnderlyingSinkAbortCallback;
   close?: UnderlyingSinkCloseCallback;
   start?: UnderlyingSinkStartCallback;
-  type?: undefined | "default" | "bytes";
+  type?: undefined | 'default' | 'bytes';
   write?: UnderlyingSinkWriteCallback<W>;
 }
 
@@ -4425,7 +4380,7 @@ interface DirectUnderlyingSource<R = any> {
   pull: (
     controller: ReadableStreamDirectController
   ) => void | PromiseLike<void>;
-  type: "direct";
+  type: 'direct';
 }
 
 interface UnderlyingSourcePullCallback<R> {
@@ -4446,7 +4401,7 @@ interface TransformStream<I = any, O = any> {
   readonly writable: WritableStream<I>;
 }
 
-declare var TransformStream: {
+declare const TransformStream: {
   prototype: TransformStream;
   new <I = any, O = any>(
     transformer?: Transformer<I, O>,
@@ -4462,7 +4417,7 @@ interface TransformStreamDefaultController<O = any> {
   terminate(): void;
 }
 
-declare var TransformStreamDefaultController: {
+declare const TransformStreamDefaultController: {
   prototype: TransformStreamDefaultController;
   new (): TransformStreamDefaultController;
 };
@@ -4497,7 +4452,7 @@ interface CountQueuingStrategy extends QueuingStrategy {
   readonly size: QueuingStrategySize;
 }
 
-declare var CountQueuingStrategy: {
+declare const CountQueuingStrategy: {
   prototype: CountQueuingStrategy;
   new (init: QueuingStrategyInit): CountQueuingStrategy;
 };
@@ -4514,11 +4469,7 @@ interface Transformer<I = any, O = any> {
   writableType?: undefined;
 }
 
-
 // ./path.d.ts
-
-
-
 
 // ./bun-test.d.ts
 
@@ -4541,7 +4492,7 @@ interface Transformer<I = any, O = any> {
  * ```
  */
 
-declare module "bun:test" {
+declare module 'bun:test' {
   export function describe(label: string, body: () => void): any;
   export function it(label: string, test: () => void | Promise<any>): any;
   export function test(label: string, test: () => void | Promise<any>): any;
@@ -4554,15 +4505,14 @@ declare module "bun:test" {
   }
 }
 
-declare module "test" {
-  import BunTestModule = require("bun:test");
+declare module 'test' {
+  import BunTestModule = require('bun:test');
   export = BunTestModule;
 }
 
-
 // ./jsc.d.ts
 
-declare module "bun:jsc" {
+declare module 'bun:jsc' {
   export function describe(value: any): string;
   export function describeArray(args: any[]): string;
   export function gcAndSweep(): void;
@@ -4622,4 +4572,3 @@ declare module "bun:jsc" {
    */
   export function startRemoteDebugger(host?: string, port?: number): void;
 }
-

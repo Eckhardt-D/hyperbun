@@ -75,6 +75,27 @@ server.listen({port: 3000});
 
 ```
 
+## Dynamic routes with params
+
+```ts
+import {createServer} from 'hyperbun';
+const server = createServer();
+
+server.post('/users/:userId', async (request, context) => {
+  const {userId} = context.params;
+  const updatePayload = await request.json();
+
+  await UserModel.updateById(userId, updatePayload);
+  return { success: "true" };
+});
+
+server.listen({
+  port: 3000,
+  hostname: "0.0.0.0",
+});
+
+```
+
 ## Send a file response
 
 ```ts

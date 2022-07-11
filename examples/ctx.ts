@@ -7,10 +7,21 @@ server.middleware((_, context) => {
 });
 
 server.middleware((_, context) => {
-  console.log(context);
+  console.log(context); // {params: {}, query: {}}
 });
 
-server.get('/', async (request) => {
+
+server.get('/:id', async (request, context) => {
+  const {id} = context.params;
+
+  return {
+    hello: 'World! ' + id,
+  };
+});
+
+// /hello?test=test
+server.get('/hello', async (request, context) => {
+  console.log(context.query) // {test: "test"}
   return {
     url: request.url,
   }

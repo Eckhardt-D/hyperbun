@@ -4,6 +4,10 @@
     "rootDir": ".",
     "outDir": "build",
     "lib": ["esnext"],
+    "module": "esnext",
+    "target": "esnext",
+    "moduleResolution": "node",
+    "types": ["bun-types"]
   },
   "include": [
     "src/**/*.ts",
@@ -12,5 +16,4 @@
   "exclude": [
     "examples/**/*.ts"
   ],
-  "types": ["bun-types"]
 }

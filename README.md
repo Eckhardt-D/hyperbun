@@ -37,7 +37,7 @@ server.listen({
 });
 ```
 
-> Note, middlewares are currently not 100% great, you can use them for context stuff and firing in sequence. But the cannot be async and don't consume the request body. Yet.
+> Note, if you consume the request body in your middlewares they will currently be empty in the route handler.
 
 ## Request Context
 
@@ -51,6 +51,12 @@ const server = createServer();
 server.middleware((request, context) => {
   context.auth = {user: '1234'};
 });
+
+// /home?search=movies
+server.get('/home', (_, context) => {
+  console.log(context.query) // { search: "movies" }
+  return 'OK';
+})
 
 server.get('/private', (_, context) => {
   if (context.auth?.user !== '1234') {

@@ -1,4 +1,5 @@
-import {createRouter} from 'radix3';
+import {createRouter as createRadixRouter} from 'radix3';
+import {join} from 'path';
 
 import {
   BlobAttachment,
@@ -14,7 +15,31 @@ export class HyperBunRouter {
   #middlewares: HyperBunMiddleware[] = [];
 
   constructor() {
-    this.#router = createRouter();
+    this.#router = createRadixRouter();
+  }
+
+  use(path: string, router: HyperBunRouter) {
+    if (typeof path !== 'string' || !(router instanceof HyperBunRouter)) {
+      throw new Error('A router middleware requires a base path to use');
+    }
+
+    this.#middlewares = [...this.#middlewares, ...router.#middlewares];
+
+    Object.keys(router.#router.ctx.staticRoutesMap).forEach(innerPath => {
+      const data = router.#router.lookup(innerPath);
+      let joinedPath = join(path, innerPath);
+
+      if (joinedPath.length > 1 && joinedPath.endsWith('/')) {
+        joinedPath = joinedPath.slice(0, -1);
+      }
+
+      if (data !== null) {
+        this.#router.insert(joinedPath, {
+          handler: data.handler,
+          method: data.method,
+        });
+      }
+    });
   }
 
   protected async handle(request: Request): Promise<Response> {
@@ -28,7 +53,7 @@ export class HyperBunRouter {
 
     const matched = this.#router.lookup(pathname);
 
-    if (!matched) {
+    if (!matched || matched.method !== request.method) {
       return new Response(`Could not ${request.method} ${pathname}`, {
         status: 404,
       });
@@ -138,3 +163,5 @@ export class HyperBunRouter {
     });
   }
 }
+
+export const createRouter = () => new HyperBunRouter();

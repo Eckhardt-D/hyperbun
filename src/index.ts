@@ -17,3 +17,4 @@ export const createServer = () => {
 };
 
 export {asAttachment} from './file';
+export {createRouter} from './router';

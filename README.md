@@ -134,6 +134,28 @@ server.post('/users/add', async (request, context) => {
 });
 ```
 
+## Create multiple Routers and use on base path
+
+```ts
+import {createServer, createRouter} from 'hyperbun';
+
+const server = createServer();
+const router1 = createRouter();
+const router2 = createRouter();
+
+server.get('/', () => new Response('/ server main router'));
+
+router1.get('/', () => new Response('/users router'));
+router2.get('/', () => new Response('/posts router'));
+
+server.use('/users', router1);
+server.use('/posts', router2);
+
+server.listen({
+  port: 3000,
+})
+```
+
 ## Available methods
 
 These listeners will automatically match the route and method that you setup and respond with a 404 for ones you don't have.

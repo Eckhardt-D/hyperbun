@@ -113,10 +113,6 @@ server.post('/users/add', async (request, context) => {
 });
 ```
 
-## Not nearly ready yet..
-
-You can probably use it for the most basic HTTP server, but there are maaaany things missing and in progress. So probably don't.
-
 ## Available methods
 
 These listeners will automatically match the route and method that you setup and respond with a 404 for ones you don't have.

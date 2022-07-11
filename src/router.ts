@@ -1,36 +1,13 @@
-import {BlobAttachment} from './file';
 import {createRouter} from 'radix3';
-import type {RadixRouter} from 'radix3';
 
-type ParamOrQuery = Record<string, unknown>;
-
-interface Context {
-  params: ParamOrQuery;
-  query: ParamOrQuery;
-  [key: string]: unknown;
-}
-
-type Returntypes =
-  | Response
-  | undefined
-  | number
-  | string
-  | object
-  | Array<string | object | number>
-  | BlobAttachment
-  | void;
-
-type HandlerReturnType = Returntypes | Promise<Returntypes>;
-
-type HyperBunHandler = (
-  request: Request,
-  context: Context
-) => HandlerReturnType;
-
-type HyperBunMiddleware = (
-  request: Request,
-  context: Context
-) => Error | Response | void | Promise<void>;
+import {
+  BlobAttachment,
+  HyperBunMiddleware,
+  Context,
+  Returntypes,
+  HyperBunHandler,
+  RadixRouter,
+} from './types';
 
 export class HyperBunRouter {
   #router: RadixRouter;
@@ -65,8 +42,7 @@ export class HyperBunRouter {
     }
 
     /**
-     * Freeze workaround. Async middlewares
-     * needs this.
+     * Freeze workaround.
      */
     request.blob();
 

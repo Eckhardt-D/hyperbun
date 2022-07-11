@@ -4,3 +4,4 @@ build/
 *.bun
 package-lock.json
 yarn.lock
+dist/

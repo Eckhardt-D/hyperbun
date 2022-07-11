@@ -1,7 +1,6 @@
 node_modules/
 *.env
 build/
-bun.*
 *.bun
 package-lock.json
 yarn.lock

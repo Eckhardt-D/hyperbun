@@ -1,115 +1,70 @@
-import {BlobAttachment} from './file';
+import {createRouter} from 'radix3';
 
-type ParamOrQuery = {[key: string]: string};
-
-interface Context {
-  params: ParamOrQuery;
-  query: ParamOrQuery;
-  [key: string]: unknown;
-}
-
-type Returntypes =
-  | Response
-  | undefined
-  | number
-  | string
-  | object
-  | Array<string | object | number>
-  | BlobAttachment
-  | void;
-
-type HandlerReturnType = Returntypes | Promise<Returntypes>;
-
-type HyperBunHandler = (
-  request: Request,
-  context: Context
-) => HandlerReturnType;
-
-type HyperBunMiddleware = (
-  request: Request,
-  context: Context
-) => Error | Response | void;
-
-interface HandlerByPath {
-  [key: string]: HyperBunHandler;
-}
+import {
+  BlobAttachment,
+  HyperBunMiddleware,
+  Context,
+  Returntypes,
+  HyperBunHandler,
+  RadixRouter,
+} from './types';
 
 export class HyperBunRouter {
-  private _middlewares = [] as HyperBunMiddleware[];
-  private handlers = {
-    _GET: {} as HandlerByPath,
-    _POST: {} as HandlerByPath,
-    _PUT: {} as HandlerByPath,
-    _PATCH: {} as HandlerByPath,
-    _DELETE: {} as HandlerByPath,
-  };
+  #router: RadixRouter;
+  #middlewares: HyperBunMiddleware[] = [];
+
+  constructor() {
+    this.#router = createRouter();
+  }
 
   protected async handle(request: Request): Promise<Response> {
     const url = new URL(request.url);
-    const path = url.pathname;
-    const search = new URLSearchParams(url.search);
+    const {pathname, searchParams} = url;
 
     const context: Context = {
       query: {},
       params: {},
     };
 
-    for (const [key, value] of search) {
-      context.query[key] = value;
-    }
+    const matched = this.#router.lookup(pathname);
 
-    let middlewareResponse: Error | Response | void;
-    /**
-     * @todo, for some reason, middlewares cannot be
-     * async - otherwise the response never gets sent
-     * debug later, for now MWs must be sync...
-     */
-    for (const middleware of this._middlewares) {
-      middlewareResponse = middleware(request, context);
-
-      if (
-        middlewareResponse instanceof Error ||
-        middlewareResponse instanceof Response
-      ) {
-        break;
-      }
-    }
-
-    if (middlewareResponse instanceof Response) {
-      return middlewareResponse;
-    }
-
-    if (middlewareResponse instanceof Error) {
-      return new Response(middlewareResponse.message, {
-        status: 500,
-      });
-    }
-
-    const method = request.method as
-      | 'GET'
-      | 'POST'
-      | 'PUT'
-      | 'PATCH'
-      | 'DELETE';
-
-    const handler = this.handlers[`_${method}`][path];
-
-    if (handler === undefined) {
-      return new Response(`Could not ${method} ${path}`, {
+    if (!matched) {
+      return new Response(`Could not ${request.method} ${pathname}`, {
         status: 404,
       });
     }
 
-    const isAsync = handler.constructor.name === 'AsyncFunction';
+    context.params = matched.params || {};
 
-    const result = isAsync
-      ? await handler(request, context)
-      : handler(request, context);
+    // @ts-ignore: ITERABLE
+    for (const [key, value] of searchParams) {
+      context.query[key] = value;
+    }
 
-    return this._createResponse(result);
+    /**
+     * Freeze workaround.
+     */
+    request.blob();
+
+    for (const middleware of this.#middlewares) {
+      const response = await middleware(request, context);
+
+      if (response instanceof Error) {
+        return new Response(response.message, {
+          status: 500,
+        });
+      }
+
+      if (response instanceof Response) {
+        return response;
+      }
+    }
+
+    const value = await matched.handler(request, context);
+    return this.#createResponse(value);
   }
 
-  private async _createResponse(input?: Returntypes) {
+  async #createResponse(input?: Returntypes) {
     if (input instanceof Response) {
       return input;
     }
@@ -145,26 +100,41 @@ export class HyperBunRouter {
   }
 
   middleware(middleware: HyperBunMiddleware) {
-    this._middlewares.push(middleware);
+    this.#middlewares.push(middleware);
   }
 
   get(path: string, handler: HyperBunHandler) {
-    this.handlers._GET[path] = handler;
+    this.#router.insert(path, {
+      handler,
+      method: 'GET',
+    });
   }
 
   post(path: string, handler: HyperBunHandler) {
-    this.handlers._POST[path] = handler;
+    this.#router.insert(path, {
+      handler,
+      method: 'POST',
+    });
   }
 
   put(path: string, handler: HyperBunHandler) {
-    this.handlers._PUT[path] = handler;
+    this.#router.insert(path, {
+      handler,
+      method: 'PUT',
+    });
   }
 
   patch(path: string, handler: HyperBunHandler) {
-    this.handlers._PATCH[path] = handler;
+    this.#router.insert(path, {
+      handler,
+      method: 'PATCH',
+    });
   }
 
   delete(path: string, handler: HyperBunHandler) {
-    this.handlers._DELETE[path] = handler;
+    this.#router.insert(path, {
+      handler,
+      method: 'DELETE',
+    });
   }
 }

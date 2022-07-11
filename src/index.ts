@@ -1,7 +1,5 @@
 import {HyperBunRouter} from './router';
-import {Serve} from './serve-types';
-
-type HyperBunListenerOptions = Omit<Serve, 'fetch'>;
+import {HyperBunListenerOptions} from './types';
 
 class HyperBunServer extends HyperBunRouter {
   listen(options: HyperBunListenerOptions): ReturnType<typeof Bun.serve> {

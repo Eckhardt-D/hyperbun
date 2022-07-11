@@ -1,12 +1,4 @@
-interface AsAttachmentOptions {
-  name: string;
-  type?: string;
-}
-
-export interface BlobAttachment {
-  blob: Blob;
-  filename: string;
-}
+import {AsAttachmentOptions, BlobAttachment} from './types';
 
 export const asAttachment = (
   path: string,

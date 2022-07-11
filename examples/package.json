@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "hyperbun": "^0.1.5"
+    "hyperbun": "^0.2.0"
   },
   "devDependencies": {
     "bun-types": "^0.1.2"

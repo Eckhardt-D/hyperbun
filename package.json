@@ -1,6 +1,6 @@
 {
   "name": "hyperbun",
-  "version": "0.2.2",
+  "version": "0.3.0",
   "description": "A fast http framework for Bun runtimes.",
   "main": "build/src/index.js",
   "types": "build/src/index.d.ts",
@@ -28,7 +28,7 @@
     "gts": "^3.1.0",
     "typescript": "^4.0.3"
   },
-  "peerDependencies": {
-    "bun-types": "^0.1.2"
+  "dependencies": {
+    "radix3": "^0.1.2"
   }
 }

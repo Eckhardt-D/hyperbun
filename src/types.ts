@@ -1,4 +1,5 @@
 import type {Serve} from 'bun';
+import {RadixRouter} from 'radix3';
 import {HyperBunRequest} from './request';
 export type {RadixRouter} from 'radix3';
 
@@ -31,6 +32,11 @@ export type Returntypes =
   | void;
 
 type HandlerReturnType = Returntypes | Promise<Returntypes>;
+export type MethodTypes = 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
+
+export type Router = {
+  [key in MethodTypes]: RadixRouter;
+};
 
 export type HyperBunHandler = (
   request: HyperBunRequest,

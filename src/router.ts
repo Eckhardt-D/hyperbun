@@ -8,16 +8,20 @@ import {
   Context,
   Returntypes,
   HyperBunHandler,
-  RadixRouter,
+  Router,
+  MethodTypes,
 } from './types';
 
 export class HyperBunRouter {
-  #router: RadixRouter;
-  #middlewares: HyperBunMiddleware[] = [];
+  #routers: Router = {
+    GET: createRadixRouter(),
+    POST: createRadixRouter(),
+    PUT: createRadixRouter(),
+    PATCH: createRadixRouter(),
+    DELETE: createRadixRouter(),
+  };
 
-  constructor() {
-    this.#router = createRadixRouter();
-  }
+  #middlewares: HyperBunMiddleware[] = [];
 
   use(path: string, router: HyperBunRouter) {
     if (typeof path !== 'string' || !(router instanceof HyperBunRouter)) {
@@ -26,20 +30,24 @@ export class HyperBunRouter {
 
     this.#middlewares = [...this.#middlewares, ...router.#middlewares];
 
-    Object.keys(router.#router.ctx.staticRoutesMap).forEach(innerPath => {
-      const data = router.#router.lookup(innerPath);
-      let joinedPath = join(path, innerPath);
+    Object.keys(router.#routers).forEach(method => {
+      const _router = router.#routers[method as MethodTypes];
 
-      if (joinedPath.length > 1 && joinedPath.endsWith('/')) {
-        joinedPath = joinedPath.slice(0, -1);
-      }
+      Object.keys(_router.ctx.staticRoutesMap).forEach(innerPath => {
+        const data = _router.lookup(innerPath);
+        let joinedPath = join(path, innerPath);
 
-      if (data !== null) {
-        this.#router.insert(joinedPath, {
-          handler: data.handler,
-          method: data.method,
-        });
-      }
+        if (joinedPath.length > 1 && joinedPath.endsWith('/')) {
+          joinedPath = joinedPath.slice(0, -1);
+        }
+
+        if (data !== null) {
+          this.#routers[method as MethodTypes].insert(joinedPath, {
+            handler: data.handler,
+            method: data.method,
+          });
+        }
+      });
     });
   }
 
@@ -52,9 +60,10 @@ export class HyperBunRouter {
       params: {},
     };
 
-    const matched = this.#router.lookup(pathname);
+    const matched =
+      this.#routers[request.method as MethodTypes].lookup(pathname);
 
-    if (!matched || matched.method !== request.method) {
+    if (!matched) {
       return new Response(`Could not ${request.method} ${pathname}`, {
         status: 404,
       });
@@ -127,37 +136,32 @@ export class HyperBunRouter {
   }
 
   get(path: string, handler: HyperBunHandler) {
-    this.#router.insert(path, {
+    this.#routers['GET'].insert(path, {
       handler,
-      method: 'GET',
     });
   }
 
   post(path: string, handler: HyperBunHandler) {
-    this.#router.insert(path, {
+    this.#routers['POST'].insert(path, {
       handler,
-      method: 'POST',
     });
   }
 
   put(path: string, handler: HyperBunHandler) {
-    this.#router.insert(path, {
+    this.#routers['PUT'].insert(path, {
       handler,
-      method: 'PUT',
     });
   }
 
   patch(path: string, handler: HyperBunHandler) {
-    this.#router.insert(path, {
+    this.#routers['PATCH'].insert(path, {
       handler,
-      method: 'PATCH',
     });
   }
 
   delete(path: string, handler: HyperBunHandler) {
-    this.#router.insert(path, {
+    this.#routers['DELETE'].insert(path, {
       handler,
-      method: 'DELETE',
     });
   }
 }

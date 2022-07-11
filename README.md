@@ -37,8 +37,6 @@ server.listen({
 });
 ```
 
-> Note, if you consume the request body in your middlewares they will currently be empty in the route handler.
-
 ## Request Context
 
 Includes `{params: {}, query: {}}` by default. More to come.

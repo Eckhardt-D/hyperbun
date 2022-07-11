@@ -1,4 +1,5 @@
 import type {Serve} from 'bun';
+import {HyperBunRequest} from './request';
 export type {RadixRouter} from 'radix3';
 
 export type HyperBunListenerOptions = Omit<Serve, 'fetch'>;
@@ -32,11 +33,11 @@ export type Returntypes =
 type HandlerReturnType = Returntypes | Promise<Returntypes>;
 
 export type HyperBunHandler = (
-  request: Request,
+  request: HyperBunRequest,
   context: Context
 ) => HandlerReturnType;
 
 export type HyperBunMiddleware = (
-  request: Request,
+  request: HyperBunRequest,
   context: Context
 ) => Error | Response | void | Promise<void>;

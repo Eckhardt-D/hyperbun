@@ -1,4 +1,5 @@
 import {createRouter as createRadixRouter} from 'radix3';
+import {HyperBunRequest} from './request';
 import {join} from 'path';
 
 import {
@@ -66,13 +67,10 @@ export class HyperBunRouter {
       context.query[key] = value;
     }
 
-    /**
-     * Freeze workaround.
-     */
-    request.blob();
+    const hyperRequest = new HyperBunRequest(request);
 
     for (const middleware of this.#middlewares) {
-      const response = await middleware(request, context);
+      const response = await middleware(hyperRequest, context);
 
       if (response instanceof Error) {
         return new Response(response.message, {
@@ -85,7 +83,7 @@ export class HyperBunRouter {
       }
     }
 
-    const value = await matched.handler(request, context);
+    const value = await matched.handler(hyperRequest, context);
     return this.#createResponse(value);
   }
 

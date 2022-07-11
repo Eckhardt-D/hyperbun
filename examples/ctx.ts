@@ -1,4 +1,4 @@
-import {createServer} from '../src/index';
+import {createServer} from '../dist';
 
 const server = createServer();
 

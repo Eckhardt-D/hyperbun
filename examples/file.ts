@@ -1,4 +1,4 @@
-import {createServer, asAttachment} from '../src/index';
+import {createServer, asAttachment} from '../dist';
 
 const server = createServer();
 

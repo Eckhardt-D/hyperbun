@@ -1,4 +1,5 @@
 import {HyperBunRouter} from './router';
+import type {HyperBunRequest} from './request';
 import type {
   HyperBunListenerOptions,
   HyperBunMiddleware,
@@ -23,4 +24,10 @@ export const createServer = () => {
 
 export {asAttachment} from './file';
 export {createRouter} from './router';
-export type {HyperBunMiddleware, Context, HyperBunRouter, HyperBunHandler};
+export type {
+  HyperBunMiddleware,
+  Context,
+  HyperBunRouter,
+  HyperBunHandler,
+  HyperBunRequest,
+};

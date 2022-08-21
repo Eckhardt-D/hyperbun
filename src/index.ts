@@ -1,5 +1,10 @@
 import {HyperBunRouter} from './router';
-import {HyperBunListenerOptions} from './types';
+import type {
+  HyperBunListenerOptions,
+  HyperBunMiddleware,
+  HyperBunHandler,
+  Context,
+} from './types';
 
 class HyperBunServer extends HyperBunRouter {
   listen(options: HyperBunListenerOptions): ReturnType<typeof Bun.serve> {
@@ -18,3 +23,4 @@ export const createServer = () => {
 
 export {asAttachment} from './file';
 export {createRouter} from './router';
+export type {HyperBunMiddleware, Context, HyperBunRouter, HyperBunHandler};

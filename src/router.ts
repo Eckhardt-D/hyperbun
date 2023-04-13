@@ -81,10 +81,6 @@ export class HyperBunRouter {
     for (let i = 0; i < this.#middlewares.length; i++) {
       const response = await this.#middlewares[i](hyperRequest, context).catch(e => e);
 
-      if (response instanceof Response) {
-        return response;
-      }
-
       if (response instanceof Error) {
         let error = response;
         const relevantErrorMiddlewares = this.#middlewares.slice(i + 1)
@@ -101,7 +97,11 @@ export class HyperBunRouter {
           status: 500,
         });
       }
-    });
+
+      if (response instanceof Response) {
+        return response;
+      }
+    }
 
     const value = await matched.handler(hyperRequest, context);
     return this.#createResponse(value);

@@ -77,20 +77,31 @@ export class HyperBunRouter {
     }
 
     const hyperRequest = new HyperBunRequest(request);
-
-    for (const middleware of this.#middlewares) {
-      const response = await middleware(hyperRequest, context);
-
-      if (response instanceof Error) {
-        return new Response(response.message, {
-          status: 500,
-        });
-      }
+    
+    for (let i = 0; i < this.#middlewares.length; i++) {
+      const response = await this.#middlewares[i](hyperRequest, context).catch(e => e);
 
       if (response instanceof Response) {
         return response;
       }
-    }
+
+      if (response instanceof Error) {
+        let error = response;
+        const relevantErrorMiddlewares = this.#middlewares.slice(i + 1)
+          .filter(middleware => middleware.length === 3);
+        for (const middleware of relevantErrorMiddlewares) {
+          const response = await middleware(hyperRequest, context, error);
+          if (response instanceof Error) {
+            error = response;
+          } else if (response instanceof Response) {
+            return response;
+          }
+        }
+        return new Response(response.message, {
+          status: 500,
+        });
+      }
+    });
 
     const value = await matched.handler(hyperRequest, context);
     return this.#createResponse(value);
